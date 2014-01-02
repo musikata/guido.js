@@ -9,9 +9,7 @@ Write music. Morph it. Display it, and play it!
 
 Guido.js provides javascript tools to encode, manipulate, display and play music.
 
-The core of Guido.js is the Guido music notation format.
-
-This is what Guido notation looks like:
+The core of Guido.js is the Guido music notation format, which looks like this: 
 
     [ \clef<"treble"> \key<"D"> \meter<"4/4">
      a1*1/2 b a/4. g/8 f#/4 g a/2 b a/4. g/8 f#/4 g
@@ -20,6 +18,7 @@ This is what Guido notation looks like:
 The snippet above might render to something like this:
 
 ![Guido Rendering](http://upload.wikimedia.org/wikipedia/en/8/84/GUIDO_music_notation_basic_example.gif)
+_(image from Wikipedia)_
  
 You can find out more about Guido here: [http://guidolib.sourceforge.net/].
 
