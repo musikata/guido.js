@@ -22,6 +22,14 @@ _(image from Wikipedia)_
  
 You can find out more about Guido here: [Guido Engine Library Homepage](http://guidolib.sourceforge.net/).
 
+## Status
+Guido.js is just getting started.
+
+## Contributing
+The Guido.js project welcomes contributors.
+
+See this wiki page for more information: [Contributing to Guido.js](http://github.com/musikata/guido.js/wiki/Contributing-to-Guido.js) .
+
 ## Why is it called 'Guido'?
 
 Guido is named for Guido d'Arezzo, the person widely considered to be the inventor of common western musical notation. See [this Wikipedia Article](http://en.wikipedia.org/wiki/Guido_of_Arezzo) for more information.
@@ -41,14 +49,6 @@ We like other people named Guido too. Like [this one](http://en.wikipedia.org/wi
 - Enable the creation of **musical tools and services**.
 - Build a **community** of musical hackers.
 - **Make our world more musical**.
-
-## Status
-Guido.js is just getting started.
-
-## Contributing
-The Guido.js project welcomes contributors.
-
-See this wiki page for more information: [Contributing to Guido.js](http://github.com/musikata/guido.js/wiki/Contributing-to-Guido.js) .
 
 ## Acknowledgements
 Guido.js is deeply indebted to the people who create, document, and maintain the C++ Guido Engine library:
