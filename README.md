@@ -27,9 +27,11 @@ You can find out more about Guido here: [Guido Engine Library Homepage](http://g
 Guido is named for Guido d'Arezzo, the person widely considered to be the inventor of common western musical notation. See [this Wikipedia Article on Guido](http://en.wikipedia.org/wiki/Guido_of_Arezzo) for more information.
 
 ![Statue of Gudio d'Arezzo](http://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Statue_of_Guido_of_Arezzo.jpg/119px-Statue_of_Guido_of_Arezzo.jpg)
+
 _(image from Wikipedia)_
 
 We like other people named Guido too. Like this one:
+
 ![Python Guido](http://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Guido_van_Rossum_OSCON_2006.jpg/160px-Guido_van_Rossum_OSCON_2006.jpg)
 
 ## Goals
