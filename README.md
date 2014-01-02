@@ -20,7 +20,7 @@ The snippet above might render to something like this:
 ![Guido Rendering](http://upload.wikimedia.org/wikipedia/en/8/84/GUIDO_music_notation_basic_example.gif)
 _(image from Wikipedia)_
  
-You can find out more about Guido here: [http://guidolib.sourceforge.net/].
+You can find out more about Guido here: [Guido Engine Library Homepage](http://guidolib.sourceforge.net/).
 
 ## Goals
 - Make it fun and easy to **describe** music in javascript.
@@ -72,4 +72,4 @@ If I have missed someone, please let me know. I apologize deeply for any uninten
 ## About
 Guido.js is spearheaded by [Musikata](http://musikata.com), an online musical education dojo.
 
-If you want to help the world be more musical, drop us a line at http://musikata.com/contact.html . We would love to hear from you.
+If you want to help the world be more musical, [drop us a line](http://musikata.com/contact.html) . We would love to hear from you.
