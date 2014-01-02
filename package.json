@@ -33,5 +33,8 @@
     "karma-coffee-preprocessor": "~0.1.2",
     "karma-phantomjs-launcher": "~0.1.1",
     "karma": "~0.10.9"
+  },
+  "dependencies": {
+    "jison": "~0.4.13"
   }
 }
