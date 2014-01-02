@@ -46,11 +46,9 @@ We like other people named Guido too. Like [this one](http://en.wikipedia.org/wi
 Guido.js is just getting started.
 
 ## Contributing
-Music lovers, we want you! 
+The Guido.js project welcomes contributors.
 
-The Guido.js project welcomes contributors.  See this wiki page for more information: [Contributing to Guido.js](http://github.com/musikata/guido.js/wiki/Contributing-to-Guido.js) .
-
-Together we can build some truly great musical tools.
+See this wiki page for more information: [Contributing to Guido.js](http://github.com/musikata/guido.js/wiki/Contributing-to-Guido.js) .
 
 ## Acknowledgements
 Guido.js is deeply indebted to the people who create, document, and maintain the C++ Guido Engine library:
@@ -79,7 +77,7 @@ And to:
 - [The SALIERI Project](http://www.salieri.org/), which started GUIDO
 - [The VexFlow Project](http://vexflow.com/), created by Mohit Muthanna, which pioneered music engraving in javascript.
 
-If I have missed someone, please let me know. I apologize deeply for any unintended omissions.
+If I (Alex) have missed someone, please let me know. I apologize deeply for any unintended omissions.
 
 ## About
 Guido.js is spearheaded by [Musikata](http://musikata.com), an online musical education dojo.
