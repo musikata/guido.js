@@ -76,7 +76,11 @@ EOL		[\x0a\x0d]
 "empty"				return 'EMPTYT';
 "_"					return 'RESTT';
 
-\"(\\\\|\\.|[^\\\"])*\" unescape(yytext); unquote(yytext); return 'STRING';
+\"(\\\\|\\.|[^\\\"])*\" %{
+  yytext = unescape(yytext); 
+  yytext = unquote(yytext); 
+  return 'STRING';
+%}
 
 {SPACE}+ return;
 .				console.log("extra text is: %s\n", yytext); return 'EXTRA';

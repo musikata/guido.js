@@ -1,0 +1,298 @@
+/* Guido Music Notation Jison Grammar */
+
+/* 
+This code defines how to create a parser that assembles groups of
+tokens into a custom Guido *Parser Event Stream* .
+A PES dispenser?
+*/
+
+/* NOTE: because Jison does not handle mid-rule actions, 
+   there are several symbols that serve as action lookups.
+   These symbols are generally prefixed with a leading underscore.
+   */
+
+/*------------------------------ numbers ------------------------------*/
+%token NUMBER
+%token PNUMBER
+%token NNUMBER
+%token FLOAT
+
+/*------------------------------ markers ------------------------------*/
+%token STARTCHORD
+%token ENDCHORD
+%token STARTSEQ
+%token ENDSEQ
+%token STARTPARAM
+%token ENDPARAM
+%token STARTRANGE
+%token ENDRANGE
+%token SEP
+%token IDSEP
+
+/*------------------------------ tags ------------------------------*/
+%token BAR
+%token TAGNAME
+%token IDT
+
+/*------------------------------ notes ------------------------------*/
+%token DIATONIC
+%token CHROMATIC
+%token SOLFEGE
+%token EMPTYT
+%token RESTT
+%token DOT
+%token DDOT
+%token TDOT
+%token SHARPT
+%token FLATT
+
+/*------------------------------ misc ------------------------------*/
+%token MLS
+%token SEC
+%token UNIT
+%token MULT
+%token DIV
+%token EQUAL
+%token STRING
+%token EXTRA
+
+%%
+
+score
+ : init_stream scorebody %{
+   yy.stream.push(['segment:end']);
+   yy.stream.push(['score:end']);
+   return yy.stream; 
+ %}
+ ;
+
+scorebody
+ : STARTCHORD _begin_segment ENDCHORD
+ | STARTCHORD _begin_segment voicelist ENDCHORD
+ | _begin_segment voice
+ ;
+
+voicelist
+ : voice append_sequence
+ | voicelist SEP voice append_sequence
+ ;
+
+voice 
+ : STARTSEQ _begin_sequence symbols ENDSEQ { yy.stream.push(['sequence:end']); }
+ ;
+
+symbols
+ :
+ | symbols music { yy.stream.push(['sequence:appendNote']); }
+ | symbols tag
+ | symbols chord { yy.stream.push(['sequence:appendChord']); }
+ ;
+
+tag 
+ : positiontag _tag_end
+ | rangetag _tag_end
+ ;
+
+positiontag 
+ : tagid _tag_add
+ | tagid STARTPARAM tagparams ENDPARAM _tag_add
+ ;
+
+rangetag
+ : positiontag STARTRANGE _tag_range symbols ENDRANGE
+ ;
+
+tagname
+ : TAGNAME { $$ = yytext.substring(1); }
+ ;
+
+tagid
+ : tagname { yy.stream.push(['tag:start', $1, 0]); }
+ | tagname IDSEP number { yy.stream.push(['tag:start', $1, $3]); }
+ | BAR { yy.stream.push(['tag:start', "\\bar", 0]); }
+ ;
+
+tagarg
+ : signednumber { yy.stream.push(['tag:arg', $1]); }
+ | floatn { yy.stream.push(['tag:arg', $1]); }
+ | signednumber UNIT %{
+  yy.stream.push(['tag:arg', $1]); 
+  yy.stream.push(['tag:arg:unit', yytext]); 
+ %}
+ | floatn UNIT %{
+  yy.stream.push(['tag:arg'], $1);
+  yy.stream.push(['tag:arg:unit', yytext]);
+ %}
+ | STRING { yy.stream.push(['tag:arg', yytext]); }
+ | id { yy.stream.push(['tag:arg', $1]); }
+ ;
+
+tagparam
+ : tagarg { yy.stream.push(['tag:addArg', ""]); }
+ | id EQUAL tagarg { yy.stream.push(['tag:addArg', $1]); }
+ ;
+
+tagparams
+ : tagparam
+ | tagparams SEP tagparam
+ ;
+
+chord
+ : STARTCHORD _begin_chord chordsymbols ENDCHORD
+ ;
+
+chordsymbols
+ : _chord_begin_note tagchordsymbol
+ | chordsymbols SEP _chord_begin_note tagchordsymbol
+ ;
+
+tagchordsymbol
+ : chordsymbol
+ | taglist chordsymbol
+ | chordsymbol taglist
+ | taglist chordsymbol taglist
+ ;
+
+chordsymbol 
+ : music { yy.stream.push(['chord:appendNote']); }
+ | rangechordtag
+ ;
+
+rangechordtag
+ : positiontag STARTRANGE _tag_range tagchordsymbol ENDRANGE _tag_end
+ ;
+
+taglist
+ : positiontag _tag_end
+ | taglist positiontag _tag_end
+ ;
+
+music 
+ : note
+ | rest
+ ;
+
+rest
+ : RESTT _begin_rest duration dots
+ | RESTT _begin_rest STARTPARAM NUMBER ENDPARAM duration dots
+ ;
+
+note
+ : noteid octave duration dots
+ | noteid accidentals octave duration dots
+ ;
+
+noteid 
+ : notename
+ | notename STARTPARAM NUMBER ENDPARAM
+ ;
+ 
+notename
+ : DIATONIC { yy.stream.push(['note:begin', yytext]); }
+ | CHROMATIC { yy.stream.push(['note:begin', yytext]); }
+ | SOLFEGE { yy.stream.push(['note:begin', yytext]); }
+ | EMPTYT { yy.stream.push(['note:begin', yytext]); }
+ ; 
+
+accidentals
+ : accidental
+ | accidentals accidental
+ ;
+
+accidental 
+ : SHARPT { yy.stream.push(['accidental', 'sharp']); }
+ | FLATT { yy.stream.push(['accidental', 'flat']); }
+ ;
+
+octave 
+ :
+ | signednumber { yy.stream.push(['octave', $1]); }
+ ;
+
+duration 
+ :
+ | MULT number DIV number %{ 
+  yy.stream.push(['note:enum', $2]); 
+  yy.stream.push(['note:denom', $4]); 
+ %}
+ | MULT number { yy.stream.push(['note:enum', $2]); } 
+ | MULT number MLS { yy.stream.push(['note:absDur', $2]); }
+ | DIV number { yy.stream.push(['note:denom', $2]); }
+ ;
+
+dots 
+ :
+ | DOT { yy.stream.push(['note:dot']); }
+ | DDOT { yy.stream.push(['note:ddot']); }
+ | TDOT { yy.stream.push(['note:tdot']); }
+ ;
+
+id 
+ : IDT { $$ = yytext; }
+ ;
+
+number
+ : NUMBER { $$ = parseFloat(yytext); }
+ ;
+
+pnumber
+ : PNUMBER { $$ = parseFloat(yytext); }
+ ;
+
+nnumber
+ : NNUMBER { $$ = parseFloat(yytext); }
+ ;
+
+floatn : FLOAT { $$ = parseFloat(yytext); }
+ ;
+
+signednumber
+ : number { $$ = $1; }
+ | pnumber { $$ = $1; } 
+ | nnumber { $$ = $1; }
+ ;
+
+_init_stream
+ : /* empty, initializes yy.stream with new list */ %{
+  yy.stream = [];
+  yy.stream.push(['score:begin']);
+ %}
+ ;
+
+_append_sequence
+ : /* empty */ { yy.stream.push(['segment:appendSequence']); }
+ ;
+
+_begin_segment
+ : /* empty */ {yy.stream.push(['segment:begin']); }
+ ;
+
+_begin_sequence
+ : /* empty */ { yy.stream.push(['sequence:begin']); }
+ ;
+
+_tag_end
+ : /* empty */ { yy.stream.push(['tag:end']); }
+ ;
+
+_tag_add
+ : /* empty */ { yy.stream.push(['tag:add']) }
+ ;
+
+_begin_chord
+ : /* empty */ { yy.stream.push(['chord:begin']); }
+ ;
+
+_chord_begin_note
+ : /* */ { yy.stream.push(['chord:beginNote']); }
+ ;
+
+_begin_rest
+ : /* */ { yy.stream.push(['note:begin'], '_'); }
+ ;
+
+_tag_range
+ : /* */ { yy.stream.push(['tag:range']); }
+ ;
+
+%%
