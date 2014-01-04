@@ -1,0 +1,17 @@
+{
+  "name": "guido.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/musikata/guido.js",
+  "authors": [
+    "adorsk <adorsk>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ]
+}

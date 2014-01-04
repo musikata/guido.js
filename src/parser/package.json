@@ -1,0 +1,14 @@
+{
+  "name": "guidoParser",
+  "version": "0.0.0",
+  "description": "sub-module of Guido.js",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "jison": "~0.4.13"
+  }
+}
