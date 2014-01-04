@@ -1,5 +1,8 @@
+var BOWER_DIR = '../bower_components';
+
 require.config({
   paths: {
+    underscore: BOWER_DIR + '/underscore/underscore'
   },
 
   packages: [
@@ -7,5 +10,9 @@ require.config({
   ],
 
   shim: {
+    'underscore': {
+      deps: [],
+      exports: '_'
+    },
   }
 });
