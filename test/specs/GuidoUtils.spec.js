@@ -29,6 +29,16 @@ function(GuidoUtils){
       });
     });
 
+    it('should getGreatestCommonDivisor', function(){
+      expect(GuidoUtils.getGreatestCommonDivisor(8, 12)).toBe(4);
+      expect(GuidoUtils.getGreatestCommonDivisor(3, 7)).toBe(1);
+    });
+
+    it('should getSmallstCommonMultiple', function(){
+      expect(GuidoUtils.getSmallestCommonMultiple(4, 6)).toBe(12);
+      expect(GuidoUtils.getSmallestCommonMultiple(3, 7)).toBe(21);
+    });
+
     describe('assert', function(){
       it('should throw error if assertion is false', function(){
         expect(function(){
