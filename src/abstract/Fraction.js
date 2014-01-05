@@ -258,32 +258,32 @@ function(GuidoUtils, _){
   };
 
   // Shortcut constants.
-  Fraction.Frac_n1 = new Fraction(-1, 1);
-  Fraction.Frac_0 = new Fraction(0, 1);
-  Fraction.Frac_7_4 = new Fraction(7, 4);
-  Fraction.Frac_3_2 = new Fraction(3, 2);
-  Fraction.Frac_1 = new Fraction(1);
-  Fraction.Frac_7_8 = new Fraction(7, 8);
-  Fraction.Frac_3_4 = new Fraction(3, 4);
-  Fraction.Frac_1_2 = new Fraction(1, 2);
-  Fraction.Frac_7_16 = new Fraction(7, 16);
-  Fraction.Frac_3_8 = new Fraction(3, 8);
-  Fraction.Frac_1_4 = new Fraction(1, 4);
-  Fraction.Frac_7_32 = new Fraction(7, 32);
-  Fraction.Frac_3_16 = new Fraction(3, 16);
-  Fraction.Frac_1_8 = new Fraction(1, 8);
-  Fraction.Frac_7_64 = new Fraction(7, 64);
-  Fraction.Frac_3_32 = new Fraction(3, 32);
-  Fraction.Frac_3_64 = new Fraction(3, 64);
-  Fraction.Frac_3_128 = new Fraction(3, 128);
-  Fraction.Frac_7_128 = new Fraction(7, 128);
-  Fraction.Frac_7_256 = new Fraction(7, 256);
-  Fraction.Frac_1_12 = new Fraction(1, 12);
-  Fraction.Frac_1_16 = new Fraction(1, 16);
-  Fraction.Frac_1_32 = new Fraction(1, 32);
-  Fraction.Frac_1_64 = new Fraction(1, 64);
-  Fraction.Frac_1_128 = new Fraction(1, 128);
-  Fraction.Frac_Max = new Fraction(Number.MAX_VALUE);
+  Fraction.FRAC_N1 = new Fraction(-1, 1);
+  Fraction.FRAC_0 = new Fraction(0, 1);
+  Fraction.FRAC_7_4 = new Fraction(7, 4);
+  Fraction.FRAC_3_2 = new Fraction(3, 2);
+  Fraction.FRAC_1 = new Fraction(1);
+  Fraction.FRAC_7_8 = new Fraction(7, 8);
+  Fraction.FRAC_3_4 = new Fraction(3, 4);
+  Fraction.FRAC_1_2 = new Fraction(1, 2);
+  Fraction.FRAC_7_16 = new Fraction(7, 16);
+  Fraction.FRAC_3_8 = new Fraction(3, 8);
+  Fraction.FRAC_1_4 = new Fraction(1, 4);
+  Fraction.FRAC_7_32 = new Fraction(7, 32);
+  Fraction.FRAC_3_16 = new Fraction(3, 16);
+  Fraction.FRAC_1_8 = new Fraction(1, 8);
+  Fraction.FRAC_7_64 = new Fraction(7, 64);
+  Fraction.FRAC_3_32 = new Fraction(3, 32);
+  Fraction.FRAC_3_64 = new Fraction(3, 64);
+  Fraction.FRAC_3_128 = new Fraction(3, 128);
+  Fraction.FRAC_7_128 = new Fraction(7, 128);
+  Fraction.FRAC_7_256 = new Fraction(7, 256);
+  Fraction.FRAC_1_12 = new Fraction(1, 12);
+  Fraction.FRAC_1_16 = new Fraction(1, 16);
+  Fraction.FRAC_1_32 = new Fraction(1, 32);
+  Fraction.FRAC_1_64 = new Fraction(1, 64);
+  Fraction.FRAC_1_128 = new Fraction(1, 128);
+  Fraction.FRAC_MAX = new Fraction(Number.MAX_VALUE);
 
   return Fraction;
 
