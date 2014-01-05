@@ -238,7 +238,7 @@ function(GuidoUtils, _){
     return new Fraction(f1 + f2);
   };
 
-  Fraction.minus = function(f1, f2){
+  Fraction.subtract = function(f1, f2){
     return Fraction.add(f1, -f2);
   };
 

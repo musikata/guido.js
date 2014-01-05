@@ -144,7 +144,7 @@ function(Fraction){
       it('should subtract', function(){
         var f1 = new Fraction(1/4);
         var f2 = new Fraction(2/4);
-        var f3 = Fraction.minus(f1, f2);
+        var f3 = Fraction.subtract(f1, f2);
         expect(f3.valueOf()).toBe(-1/4);
       });
 
