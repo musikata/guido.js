@@ -26,7 +26,6 @@ function(
       if (arguments[0] instanceof Fraction){
       }
 
-      // ARMusicalObject(Fraction relativeTimePositionOfMusicalObject)
       // ARMusicalObject(ARMusicalObject arMusicalObject);
       else if (arguments[0] instanceof ARMusicalObject){
       }
@@ -35,51 +34,27 @@ function(
   };
 
   _.extend(ARMusicalObject.prototype, {
-		Copy: function(){},
-
-		removeGRRepresentation: function(){},
 
 		getDuration: function(){
       return this.duration;
-    },
-
-		getRelativeTimePosition: function(){
-      return this.relativeTimePosition;
-    },
-
-		getRelativeEndTimePosition: function(){},
-
-    toString: function(){},
-
-		setStartTimePosition: function(pos){},
-
-		setRelativeTimePosition: function(newRelativeTimePosition){},
-
-		setRelativeEndTimePosition: function(tp){
-      this.duration = tp - this.relativeTimePosition;
     },
 
 		setDuration: function(dur){
       this.duration = dur;
     },
 
-		getFirstGRRepresentation: function(){},
+		setStartTimePosition: function(pos){},
 
-		getLastGRRepresentation: function(){},
-
-		getGRRepresentation: function(){
-      return this.mGrObject;
+		getRelativeTimePosition: function(){
+      return this.relativeTimePosition;
     },
 
-		addGRRepresentation: function(p_grep){},
+		setRelativeTimePosition: function(newRelativeTimePosition){},
 
-		resetGRRepresentation: function(){},
+		getRelativeEndTimePosition: function(){},
 
-		isEventClass: function(){
-      return false;
-    },
-
-		browse: function(mapper){
+		setRelativeEndTimePosition: function(tp){
+      this.duration = tp - this.relativeTimePosition;
     },
 
 		setVoiceNum: function(num){
@@ -96,7 +71,33 @@ function(
 
     getDrawGR: function(){
       return drawGR;
+    },
+
+		Copy: function(){},
+
+    toString: function(){},
+
+		addGRRepresentation: function(p_grep){},
+
+		getGRRepresentation: function(){
+      return this.mGrObject;
+    },
+
+		removeGRRepresentation: function(){},
+
+		resetGRRepresentation: function(){},
+
+		getFirstGRRepresentation: function(){},
+
+		getLastGRRepresentation: function(){},
+
+		isEventClass: function(){
+      return false;
+    },
+
+		browse: function(mapper){
     }
+
   });
 
   return ARMusicalObject;
