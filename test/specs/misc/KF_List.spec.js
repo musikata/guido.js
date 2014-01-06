@@ -5,7 +5,7 @@ define(
 function(
   KF_List
 ){
-  ddescribe('KF_List', function(){
+  describe('KF_List', function(){
     it('should be defined', function(){
       expect(KF_List).toBeDefined();
     });
