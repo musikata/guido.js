@@ -1,92 +1,93 @@
 define(
   [
     'underscore',
+    'guido/misc/Class',
     './Fraction'
 ],
 function(
   _,
+  Class,
   Fraction
 ){
 
-  // Constructors.
-  var ARMusicalObject = function(){
-    this.relativeTimePosition;
-		this.duration;
-		this.voiceNum;
-		this.drawGR;
-		this.grObject;
+  var ARMusicalObject = Class.extend({
 
-    // ARMusicalObject()
-    if (arguments.length == 0){
-      this.relativeTimePosition = Fraction.FRAC_0;
-      this.duration = Fraction.FRAC_0;
-      this.voiceNum = 0;
-      this.drawGR = true;
-      this.grObject = null;
-    }
+    // Constructors.
+    init: function(){
+      this.relativeTimePosition;
+      this.duration;
+      this.voiceNum;
+      this.drawGR;
+      this.grObject;
 
-    if (arguments.length == 1){
-
-      // ARMusicalObject(Fraction relativeTimePositionOfMusicalObject)
-      if (arguments[0] instanceof Fraction){
-        this.relativeTimePosition = arguments[0];
+      // ARMusicalObject()
+      if (arguments.length == 0){
+        this.relativeTimePosition = Fraction.FRAC_0;
         this.duration = Fraction.FRAC_0;
         this.voiceNum = 0;
         this.drawGR = true;
         this.grObject = null;
       }
 
-      // ARMusicalObject(ARMusicalObject arMusicalObject);
-      else if (arguments[0] instanceof ARMusicalObject){
-        var srcMusicalObject = arguments[0];
-        var propsToCopy = [
-          'relativeTimePosition',
-          'duration',
-          'voiceNum',
-          'drawGR'
-        ];
-        _.each(propsToCopy, function(prop){
-          this[prop] = srcMusicalObject[prop];
-        }, this);
-        this.grObject = null;
+      else if (arguments.length == 1){
+
+        // ARMusicalObject(Fraction relativeTimePositionOfMusicalObject)
+        if (arguments[0] instanceof Fraction){
+          this.relativeTimePosition = arguments[0];
+          this.duration = Fraction.FRAC_0;
+          this.voiceNum = 0;
+          this.drawGR = true;
+          this.grObject = null;
+        }
+
+        // ARMusicalObject(ARMusicalObject arMusicalObject);
+        else if (arguments[0] instanceof ARMusicalObject){
+          var srcMusicalObject = arguments[0];
+          var propsToCopy = [
+            'relativeTimePosition',
+            'duration',
+            'voiceNum',
+            'drawGR'
+          ];
+          _.each(propsToCopy, function(prop){
+            this[prop] = srcMusicalObject[prop];
+          }, this);
+          this.grObject = null;
+        }
       }
+    },
 
-    }
-  };
-
-  _.extend(ARMusicalObject.prototype, {
-
-		setDuration: function(dur){
+    setDuration: function(dur){
       this.duration = dur;
     },
 
-		getDuration: function(){
+    getDuration: function(){
       return this.duration;
     },
 
-		setStartTimePosition: function(pos){},
+    setStartTimePosition: function(pos){},
 
-		setRelativeTimePosition: function(relativeTimePosition){
+    setRelativeTimePosition: function(relativeTimePosition){
       this.relativeTimePosition = relativeTimePosition;
     },
 
-		getRelativeTimePosition: function(){
+    getRelativeTimePosition: function(){
       return this.relativeTimePosition;
     },
 
-		setRelativeEndTimePosition: function(timePos){
+    setRelativeEndTimePosition: function(timePos){
       this.duration = Fraction.subtract(timePos, this.relativeTimePosition);
     },
 
-		getRelativeEndTimePosition: function(){
+    getRelativeEndTimePosition: function(){
       return Fraction.add(this.relativeTimePosition, this.duration);
     },
 
-		setVoiceNum: function(num){
+    setVoiceNum: function(num){
       this.voiceNum = num;
     },
 
-		getVoiceNum: function(){
+    getVoiceNum: function(){
       return this.voiceNum;
     },
 
@@ -98,45 +99,45 @@ function(
       return this.drawGR;
     },
 
-		Copy: function(){
+    Copy: function(){
       return new ARMusicalObject(this);
     },
 
     toString: function(){
       return "ARMusicalObject:" +
-        " duration: " + this.duration.toString() + ';' + 
+        " duration: " + this.duration.toString() + ';' +
         " time pos: " + this.relativeTimePosition.toString() + ';';
     },
 
-		addGRRepresentation: function(grRepresentation){
+    addGRRepresentation: function(grRepresentation){
       throw new Error('NOT YET IMPLEMENTED');
     },
 
-		getGRRepresentation: function(){
+    getGRRepresentation: function(){
       return this.grObject;
     },
 
-		removeGRRepresentation: function(){
+    removeGRRepresentation: function(){
       throw new Error('NOT YET IMPLEMENTED');
     },
 
-		resetGRRepresentation: function(){
+    resetGRRepresentation: function(){
       throw new Error('NOT YET IMPLEMENTED');
     },
 
-		getFirstGRRepresentation: function(){
+    getFirstGRRepresentation: function(){
       throw new Error('NOT YET IMPLEMENTED');
     },
 
-		getLastGRRepresentation: function(){
+    getLastGRRepresentation: function(){
       throw new Error('NOT YET IMPLEMENTED');
     },
 
-		isEventClass: function(){
+    isEventClass: function(){
       return false;
     },
 
-		browse: function(mapper){}
+    browse: function(mapper){}
 
   });
 

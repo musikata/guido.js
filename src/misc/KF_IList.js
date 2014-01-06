@@ -8,41 +8,39 @@ function(
   KF_List
 ){
 
-  // Constructors
-  var KF_IList = function(){
-    this.ownsElements;
-    // Default comparator function.
-    this.defaultCmp = function(a,b){return (a > b)};
+  var KF_IList = KF_List.extend({
 
-    // KF_IList()
-    if (arguments.length == 0){
-      // Call KF_List(bool ownsElements constructor)
-      KF_IList.apply(this, [false]);
-    }
+    // Constructors
+    init: function(){
+      this.ownsElements;
 
-    // KF_IList(bool ownsElements)
-    else if (arguments.length == 1){
-      // Call superclass constructor
-      KF_List.apply(this);
-      this.ownsElements = arguments[0];
-    }
-    // KF_IList(KF_Ilist lst, ownselements)
-    else if(arguments.length == 2){
-      // Call superclass constructor
-      KF_List.apply(this);
-
-      // Copy list elements.
-      var list = arguments[0];
-      this.ownsElements = arguments[1];
-      var pos = list.GetHeadPosition();
-      while (pos.nodeRef){
-        var data = list.GetNext(pos);
-        this.AddTail(data);
+      // KF_IList()
+      if (arguments.length == 0){
+        // Call KF_IList(bool ownsElements constructor)
+        KF_IList.prototype.init.apply(this, [false]);
       }
-    }
-  };
 
-  _.extend(KF_IList.prototype, KF_List.prototype, {
+      // KF_IList(bool ownsElements)
+      else if (arguments.length == 1){
+        // Call superclass constructor
+        KF_List.prototype.init.apply(this);
+        this.ownsElements = arguments[0];
+      }
+      // KF_IList(KF_Ilist lst, ownselements)
+      else if(arguments.length == 2){
+        // Call superclass constructor
+        KF_List.prototype.init.apply(this);
+
+        // Copy list elements.
+        var list = arguments[0];
+        this.ownsElements = arguments[1];
+        var pos = list.GetHeadPosition();
+        while (pos.nodeRef){
+          var data = list.GetNext(pos);
+          this.AddTail(data);
+        }
+      }
+    },
 
     GetElementPos: function(data){
       var pos = this.GetHeadPosition();

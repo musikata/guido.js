@@ -11,28 +11,29 @@
 define(
   [
     'underscore',
+    './Class',
     'guido/GuidoUtils',
     './KF_ListNode'
 ],
 function(
   _,
+  Class,
   GuidoUtils,
   KF_ListNode
 ){
 
-  // Constructors
-  var KF_List = function(){
-    this.head;
-    this.tail;
-    this.count;
+  var KF_List = Class.extend({
+    init: function(){
+      // Constructors
+      this.head;
+      this.tail;
+      this.count;
 
-    // KF_List()
-    if (arguments.length == 0){
-      this.count = 0;
-    }
-  };
-
-  _.extend(KF_List.prototype, {
+      // KF_List()
+      if (arguments.length == 0){
+        this.count = 0;
+      }
+    },
 
     size: function(){
       return this.count;

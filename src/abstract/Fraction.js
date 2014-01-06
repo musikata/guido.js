@@ -7,80 +7,85 @@
 
 define(
   [
-    'guido/GuidoUtils',
-    'underscore'
+    'underscore',
+    'guido/misc/Class',
+    'guido/GuidoUtils'
 ],
-function(GuidoUtils, _){
+function(
+  _,
+  Class,
+  GuidoUtils
+){
 
   // First 10 Primes, used for converting floats to
   // fractions.
   var _PRIMES = [2, 3, 5, 7, 9, 11, 13, 17, 19, 21];
 
   // Constructors.
-  var Fraction = function(){
+  var Fraction = Class.extend({
 
-    this.numerator;
-    this.denominator;
-    this.dval;
+    init: function(){
 
-    // Fraction()
-    if (arguments.length == 0){
-      this.numerator = 0;
-      this.denominator = 1;
-      this.dval = 0;
-    }
+      this.numerator;
+      this.denominator;
+      this.dval;
 
-    // Fraction(numerator, denominator)
-    else if (arguments.length == 2){
-      this.set.apply(this, arguments);
-    }
-
-    else if (arguments.length == 1){
-      var val = arguments[0];
-      var isInt = (val % 1) === 0;
-
-      // Fraction(intValue)
-      if (isInt){
-        this.numerator = val;
-        this.denominator = 1;
-        this.dval = val;
-      }
-
-      // Fraction(floatValue)
-      // Attemps to convert from a float value to a real-valued fraction.
-      // We do this by multiplying the number by powers of primes.
-      // If the denominator is in fact composed of powers of primes
-      // within in our range, then the multiplied numerator will be a pure
-      // integer when we have found a superset of the denominator's composition.
-      else {
-        this.numerator = val;
+      // Fraction()
+      if (arguments.length == 0){
+        this.numerator = 0;
         this.denominator = 1;
         this.dval = 0;
+      }
 
-        var i = 0;
-        var multiplier = 1;
-        var primeExp = 7; // Raise primes to this exponent for better coverage.
-        var threshold = 1.0e-8;
+      // Fraction(numerator, denominator)
+      else if (arguments.length == 2){
+        this.set.apply(this, arguments);
+      }
 
-        var modfResult = GuidoUtils.modf(val);
-        while ( (modfResult.f > threshold) && i < _PRIMES.length) {
-          multiplier *= Math.pow(_PRIMES[i], primeExp);
-          this.numerator *= multiplier;
-          this.denominator *= multiplier;
-          modfResult = GuidoUtils.modf(this.numerator);
-          i++;
+      else if (arguments.length == 1){
+        var val = arguments[0];
+        var isInt = (val % 1) === 0;
+
+        // Fraction(intValue)
+        if (isInt){
+          this.numerator = val;
+          this.denominator = 1;
+          this.dval = val;
         }
-        GuidoUtils.assert(modfResult.f < threshold);
-        this.numerator = modfResult.i;
 
-        this.normalize();
-      } // end Fraction(floatValue)
+        // Fraction(floatValue)
+        // Attemps to convert from a float value to a real-valued fraction.
+        // We do this by multiplying the number by powers of primes.
+        // If the denominator is in fact composed of powers of primes
+        // within in our range, then the multiplied numerator will be a pure
+        // integer when we have found a superset of the denominator's composition.
+        else {
+          this.numerator = val;
+          this.denominator = 1;
+          this.dval = 0;
 
-    }
+          var i = 0;
+          var multiplier = 1;
+          var primeExp = 7; // Raise primes to this exponent for better coverage.
+          var threshold = 1.0e-8;
 
-  };
+          var modfResult = GuidoUtils.modf(val);
+          while ( (modfResult.f > threshold) && i < _PRIMES.length) {
+            multiplier *= Math.pow(_PRIMES[i], primeExp);
+            this.numerator *= multiplier;
+            this.denominator *= multiplier;
+            modfResult = GuidoUtils.modf(this.numerator);
+            i++;
+          }
+          GuidoUtils.assert(modfResult.f < threshold);
+          this.numerator = modfResult.i;
 
-  _.extend(Fraction.prototype, {
+          this.normalize();
+        } // end Fraction(floatValue)
+
+      }
+
+    },
 
     getNumerator : function(){
       return this.numerator;
