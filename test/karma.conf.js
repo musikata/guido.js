@@ -2,36 +2,41 @@
 // Generated on Tue Aug 13 2013 10:37:52 GMT+0100 (BST)
 
 module.exports = function(config) {
+
+  var specFiles = require('./specFiles.js').files;
+
+  var srcFiles = [
+    { pattern: 'src/**/*.js', watched: true, included: false},
+    { pattern: 'src/**/*.html', watched: true, included: false}
+  ];
+
+  var libFiles = [
+    { pattern: 'bower_components/**/*.js', watched: false, included: false}
+  ];
+
+  var configFiles = [
+    {pattern: 'test/karma.conf.js', watched: true, included: false},
+    {pattern: 'test/specFiles.js', watched: true, included: false},
+    'test/require.common.js',
+    'test/test-main.js'
+  ];
+
+
   config.set({
 
     // base path, that will be used to resolve files and exclude
     basePath: '../',
 
-
     // frameworks to use
     frameworks: ['jasmine', 'requirejs'],
 
-
     // list of files / patterns to load in the browser
-    files: [
-
-      // Source files.
-      { pattern: 'src/**/*.js', watched: true, included: false},
-      { pattern: 'src/**/*.html', watched: true, included: false},
-
-      // Test files.
-      { pattern: 'test/specs/**/*spec.js', watched: true, included: false},
-
-      // Libs.
-      { pattern: 'bower_components/**/*.js', watched: false, included: false},
-
-      // shared require config.
-      'test/require.common.js',
-
-      // Main test runner.
-      'test/test-main.js'
-    ],
-
+    files: []
+      .concat(specFiles)
+      .concat(srcFiles)
+      .concat(libFiles)
+      .concat(configFiles)
+      ,
 
     // list of files to exclude
     exclude: [],
