@@ -10,7 +10,8 @@ var specFiles = [
   '/misc/KF_List.spec.js',
   '/misc/KF_IList.spec.js',
   // abstract
-  '/abstract/ARMusicalObject.spec.js'
+  '/abstract/ARMusicalObject.spec.js',
+  '/abstract/ARMusic.spec.js',
 ];
 
 // Prefix specs with specsDir.
