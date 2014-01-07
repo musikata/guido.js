@@ -74,20 +74,28 @@ function(
     doAutoBreaks: function(){
     },
 
-    MarkVoice: function(){
-      // MarkVoice(voicenum, fromnum, fromdenom, lengthnum, lengthdenom, red,
-      // green, blue)
-      if (arguments.length == 8){
-      }
-      // MarkVoice(voicenum, from, length, red, green blue)
-      else if( arguments.length == 6){
-      }
-    },
-
+    // @TODO: Implement in its own module, or in AutoBreaks module.
     doAutoStuff: function(){
     },
 
+    MarkVoice: function(){
+      var voiceNum = arguments[0];
+      var pos = this.GetHeadPosition();
+      while (pos.nodeRef){
+        var voice = this.GetNext(pos);
+        if (voice.getVoiceNum() == voiceNum){
+          voice.prototype.MarkVoice.apply(voice, arguments.slice(1));
+          break;
+        }
+      }
+    },
+
     removeAutoTags: function(){
+      // Iterate through voices to removeAutoTags.
+      var pos = this.GetHeadPosition();
+      while (pos.nodeRef){
+        this.GetNext(pos).removeAutoTags();
+      }
     },
 
     getName: function(){
