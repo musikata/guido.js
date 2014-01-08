@@ -39,7 +39,7 @@ function(
     },
 
     countVoices: function(){
-      return this.getCount();
+      return this.GetCount();
     },
 
     getTimeMap: function(f){
