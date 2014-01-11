@@ -2,12 +2,16 @@ define(
   [
     '../misc/Class',
     './ObjectList',
-    './ARMusicalEvent'
+    './ARMusicalEvent',
+    './Fraction',
+    '../GuidoUtils'
 ],
 function(
   Class,
   ObjectList,
-  ARMusicalEvent
+  ARMusicalEvent,
+  Fraction,
+  GuidoUtils
 ){
 
   var ARMusicalVoice = ARMusicalEvent.extend(ObjectList.prototype).extend({
@@ -33,7 +37,79 @@ function(
 
       // ARMusicalVoice()
       if (arguments.length == 0){
+        // Owns on elements.
+        ObjectList.prototype.init.apply(this, [true]);
+        ARMusicalEvent.prototype.init.apply(this);
+        this.currentChord = null;
+        this.currentShareLocation = null;
+        this.chordGroupList = null;
+        this.numChordVoice = -1;
+        this.chordBeginState = null;
+        this.voiceNum = 0;
+        this.endState = null;
+        this.readMode = 'CHORDMODE';
+        this.posStagList =  null;
+
+        this.startPosTagList = new StartPositionTagList(false);
+        this.lastEvPosition = null;
+        this.pitchSum = 0;
+        this.sum = 0;
+
+        this.curVoiceState = new ARMusicalVoiceState();
       }
+    },
+
+    GetHeadPosition: function(voiceState){
+      voiceState.DeleteAll();
+      voiceState.vpos = ObjectList.prototype.GetHeadPosition.apply(this);
+      if (this.posTagList){
+        voiceState.ptagpos = this.posTagList.GetHeadPosition();
+      }
+      else{
+        voiceState.ptagpos = null;
+      }
+
+      if (voiceState.vpos == null){
+        voiceState.curtp = Fraction.FRAC_0;
+        return voiceState.vpos;
+      }
+
+      var obj = this.GetAt(voiceSate.vpos);
+
+      if (this.posTagList){
+        while (voiceState.ptagpos.nodeRef){
+          var ptag = this.posTagList.GetAt(voiceState.ptagpos);
+          var arTagEnd = ptag.toTagEnd();
+          if (arTagEnd){
+            break;
+          }
+          else if(ptag.getPosition().nodeRef == voiceState.vpos.nodeRef){
+            voiceState.AddPositionTag(ptag);
+          }
+          else{
+            break;
+          }
+          this.posTagList.GetNext(voiceState.ptagpos);
+        }
+      }
+
+      if (obj){
+        voiceState.curtp = obj.getRelativeTimePosition();
+      }
+      else{
+        voiceState.curtp = Fraction.FRAC_0;
+      }
+
+      if (this.readMode == 'CHORDMODE' && voiceState.curChordTag){
+        GuidoUtils.assert(! voiceState.chordState);
+        GuidoUtils.assert(! voiceState.prevChordState);
+
+        voiceState.prevChordState = null;
+        voiceState.chordState = new ARMusicalVoiceState(voiceState);
+      }
+
+      return voiceState.vpos;
+
     },
 
     MarkVoice: function(){
@@ -133,9 +209,6 @@ function(
     },
 
     resetGRRepresentation: function(){
-    },
-
-    GetHeadPosition: function(voiceState){
     },
 
     GetPrevEent: function(pos, voiceState){
