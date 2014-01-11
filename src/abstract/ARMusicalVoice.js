@@ -59,6 +59,9 @@ function(
       }
     },
 
+    // Not clear to me yet what is happening here.
+    // There seem to be some state flags involved though, for
+    // different behaviors in different states.
     GetHeadPosition: function(voiceState){
       voiceState.DeleteAll();
       voiceState.vpos = ObjectList.prototype.GetHeadPosition.apply(this);
@@ -110,6 +113,119 @@ function(
 
       return voiceState.vpos;
 
+    },
+
+    // @TODO: Figure out what the heck is going on here.
+    //
+    // Looks this method gets called when
+    // inserting breaks, to go back a position?
+    // Per the comments in the c++ code.
+    GetPrevEent: function(pos, voiceState){
+      voiceState.DeleteAddedAndRemovedPTags();
+      var tmpPos = {nodeRef: pos.nodeRef};
+      if (! tmpPos.nodeRef){
+        tmpPos = this.GetTailPosition();
+      }
+      else{
+        this.GetPrev(tmpPos);
+      }
+
+      // ar should be an event
+      var ar = this.GetAt(tmpPos);
+      GuidoUtils.assert(ar instanceof ARMusicalEvent);
+
+      // this is set, if the previous is event is a chord; if this is the case, we can use
+      // // the previous-chordstate to set the current voice state.
+      var prevIsChord = 0;
+      var savedChordTag = voiceState.curChordTag;
+
+      // check the Position-Tags (End) do the following:
+      // - remove those tags, that have starting-pos == pos
+      // - add those tags, that have ending-pos == pos
+      //   AND have not starting-pos == pos
+      if (this.posTagList){
+        var ptagTmpPrevPos = {nodeRef: null};
+        if (voiceState.ptagPos.nodeRef == null){
+          voiceState.ptagPos = this.posTagList.GetTailPosition();
+          while (voiceState.ptagPos.nodeRef){
+            ptagTmpPrevPos.nodeRef = voiceState.ptagPos.nodeRef;
+            var arPosTag = this.posTagList.GetPrev(voiceState.ptagPos);
+            var arTagEnd = arPosTag.toARTagEnd();
+
+            if (arTagEnd && arTagEnd.getPosition().nodeRef == tmpPos.nodeRef){
+              voiceState.AddPositionTag(arPosTag.getCorrespondence());
+              if (
+                (this.readMode == 'CHORDMODE')
+                  && (savedChordTag != voiceState.curChordTag)
+              ){
+                // Then the previous event is a chord.
+                if (voiceState.prevChordState){
+                  GuidoUtils.assert(
+                    voiceState.chordState || voiceState.prevChordState);
+                  prevIsChord = 1;
+                  break;
+                }
+              }
+            } // if (arTagEnd ...
+            else{
+              // then the position is set to the next following one.
+              this.posTagList.GetNext(ptagTmpPrevPos);
+              voiceState.ptagPos = ptagTmpPrevPos.nodeRef;
+              break;
+            }
+          }
+        } // if (voiceState.ptagPos.nodeRef == null ...
+        else{
+          while (voiceState.ptagPos.nodeRef){
+            ptagTmpPrevPos.nodeRef = voiceState.ptagPos.nodeRef;
+            this.posTagList.GetPrev(voiceState.ptagPos);
+
+            // it can be, that there is NO previous entry in the position tags ...
+            if (! voiceState.ptagPos.nodeRef){
+              voiceState.ptagPos.nodeREf = ptagTmpPrevPos.nodeRef;
+              break;
+            }
+
+            var arPosTag = this.posTagList.GetAt(voiceState.ptagPos);
+            var arTagEnd = arPosTag.toARTagEnd();
+            if (! arTagEnd && (arPosTag.getPosition().nodeRef == pos.nodeRef)){
+              // these are the PositionTags that point to the second eventposition
+              voiceState.RemovePositionTag(arPosTag);
+            }
+            else if(arTagEnd && (arPosTag.getPosition().nodeRef == tmpPos.nodeRef)){
+              // these point to the first event (the one that will be the current event ...)
+              voiceState.AddPositionTag(arPosTag.getCorrespondence());
+              if ( (this.readMode == 'CHORDMODE') && (savedChordTag != voiceState.curChordTag)){
+                // then the previous event is a chord
+                GuidoUtils.assert(voiceState.chordState || voiceState.prevChordState);
+                prevIsChord = 1;
+                break;
+              }
+
+            }
+            else{
+              // then we are finished.
+              this.posTagList.GetNext(voiceState.ptagPos);
+              break;
+            }
+          }
+        }
+      }
+
+      if (prevIsChord){
+        var tmp = null;
+        GuidoUtils.assert(voiceState.prevChordState);
+        tmp = new ARMusicalVoiceState(voiceState.prevChordState);
+        GuidoUtils.assert(tmp);
+        voiceState = tmp;
+        voiceState.chordState = tmp;
+        pos.nodeRef = voiceState.vPos.nodeRef;
+        return;
+      }
+
+      pos.nodeRef = tmpPos.nodeRef;
+      voiceState.vPos = pos.nodeRef;
+      voiceState.curTimePos = ar.GetRelativeTimePosition();
     },
 
     MarkVoice: function(){
@@ -209,9 +325,6 @@ function(
     },
 
     resetGRRepresentation: function(){
-    },
-
-    GetPrevEent: function(pos, voiceState){
     },
 
     GetNext: function(pos, voiceState){
