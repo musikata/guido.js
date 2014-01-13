@@ -354,6 +354,119 @@ function(
 
     },
 
+    getARMusicalObjectsAtTimePosition: function(timePos){
+      // legacy method, not used in original c++.
+    },
+
+    getPosAtTimePosition: function(timePos){
+      // legacy method, not used in original c++
+    },
+
+    InsertAtTail: function(newMusicalObject){
+      GuidoUtils.assert(newMusicalObject);
+      return ObjectList.prototype.AddTail.apply(this, [newMusicalObject]);
+    },
+
+    // AddTail does not automatically add at the tail.
+    // It depends on numChordVoice.
+    // If numChordVoice == 1, tags are added at saved location of
+    // posFirstInChord (??? wtf ???)
+    // This is necessary, so that State-Information is available before a
+    // chord is parsed later in the graphical transformation
+    // (like stem-direction, meter, key changes).
+    // This can alter the order of the original input, though
+    // the result will be semantically equivalent.
+    // e.g. \\meter<"3/4"> \\stemsUp { c } is the same as
+    // { \\meter<"3/4"> \\stemsUp c}
+    AddTail: function(newMusicalObject){
+      GuidoUtils.assert(newMusicalObject);
+      newMusicalObject.setVoiceNum(this.getVoiceNum());
+      // test if position tags are falsely entered here.
+      var pTag = newMusicalobject.toARPositionTag(); // isa test???
+      var mTag = newMusicalobject.toARMusicalTag(); // isa test???
+      if (pTag && mTag){
+        // If this assertion fails, you have added an element that
+        // is actually a position with a range.
+        GuidoUtils.assert(! mTag.getRange());
+      }
+
+      var group = 0;
+      if (this.chordStateBegin){
+        // We are within a chord.
+        // And need to deal with displayDuration, stemSharing.
+
+        if (! this.chordGroupList){
+          // owns elements...
+          this.chordGroupList = new ChordGroupList(1);
+        }
+
+        group = chordGroupList.GetTail();
+        if (! group){
+          group = new ARChordGroup();
+          group.dur = newMusicalObject.getDuration();
+          this.chordGroupList.AddTail(group);
+          // Now we need to insert an empty event.
+          // Because shareStem needs an emptyEvent at the beginning.
+          var tmpNote = new ARNote('empty', 0, 0, 0, 1, 80);
+          group.startPos = ObjectList.prototype.AddTail.apply(this, [tmpNote]);
+        }
+        group chordGroupList.GetTail();
+        // Ugly. repeated code from above.
+        if (group.dur != newMusicalObject.getDuration()){
+          group = new ARChordGroup();
+          group.dur = newMusicalObject.getDuration();
+          this.chordGroupList.AddTail(group);
+          // Now we need to insert an empty event.
+          // Because shareStem needs an emptyEvent at the beginning.
+          var tmpNote = new ARNote('empty', 0, 0, 0, 1, 80);
+          group.startPos = ObjectList.prototype.AddTail.apply(this, [tmpNote]);
+        }
+        newMusicalObject.setDuration(Fraction.FRAC_0);
+        this.numChordVoice += 1;
+      } // if (this.chordStateBegin)
+
+      newMusicalObject.setRelativeTimePosition(this.duration);
+      this.duration = Fraction.add(this.duration, newMusicalObject.getDuration());
+      var tmp = {nodeRef: null};
+      if (mTag && (this.numChordVoice == 0) && mTag.IsStateTag()){
+        // Have to add elements at posFirstInChord.
+        // Timeposition is still ok.
+        tmp = ObjectList.prototype.AddElementAt.apply(this, [this.posFirstInChord, newMusicalObject]);
+      }
+      else{
+        tmp = ObjectList.prototype.AddTail(newMusicalObject);
+      }
+
+      // now check, if there tags that need to be added to the current position.
+      // this.startPosTagList contains all pos tags that have no startPosition
+      // yet.
+      // During AddTail, these tags get their startPositions.
+      // A golden rule of GUIDO is:
+      // a range in GUIDO always has events inside (even if just empty events)
+      if (newMusicalObject instanceof ARMusicalEvent){
+        while (this.startPosTagList.GetCount() > 0){
+          var tb = this.startPosTagList.RemoveHead();
+          tb.setStartPosition({nodeRef: tmp.nodeRef});
+        }
+
+        this.lastEvePosition = {nodeRef: tmp.nodeRef};
+        // Keep pitch stats.
+        // NOTE: need better instanceof in our own Class obj.
+        if ((newMusicalObject instanceof ARNote) && newMusicalObject.getPitch() != 'EMPTY'){
+          this.pitchSum += newMusicalObject.getOctave()  * 7 + newMusicalObject.getPitch();
+          this.sum += 1;
+        }
+      }
+
+      if (group){
+        group.endPos = {nodeRef: tmp.nodeRef};
+      }
+
+      this.curVoiceState.vPos = {nodeRef: tmp.nodeRef};
+      this.curVoiceState.curTimePos = this.duration;
+      return tmp;
+    },
+
     MarkVoice: function(){
     },
 
@@ -418,18 +531,6 @@ function(
     },
 
     doAutoCluster: function(){
-    },
-
-    getPosAtTimePosition: function(timePos){
-    },
-
-    getARMusicalObjectsAtTimePosition: function(timePos){
-    },
-
-    AddTail: function(newMusicalObject){
-    },
-
-    InsertAtTail: function(newMusicalObject){
     },
 
     adjustDuration: function(newDuration){
