@@ -228,6 +228,132 @@ function(
       voiceState.curTimePos = ar.GetRelativeTimePosition();
     },
 
+    // Get object at position and increment position pointer.
+    // Chordmode behavior affects this.
+    GetNext: function(pos, voiceState){
+      voiceState.DeleteAddedAndRemovedPTags();
+      var overReadChord = 0;
+      var savedChordTag = null;
+      if (voiceState.curChordTag && (this.readMode == 'CHORDMODE')){
+        // True when the current pos points to the first event within a
+        // chord-tag and we want to read the voice in chordmode.
+        overReadChord = 1;
+        savedChordTag = voiceState.curChordTag;
+      }
+
+      var first = {nodeRef: null};
+      var obj = {nodeRef: null};
+      do {
+        // Looks like this bit is removing something in voiceState?
+        if (this.posTagList){
+          while (voiceState.pTagPos){
+            var pTag = this.posTagList.GetAt(voiceState.pTagPos);
+            var arTagEnd = pTag.toARTagEnd();
+
+            // Hmm. This pTag/arTagEnd combo seems to get used a lot.
+            // I'm not sure yet what it's doing.
+            if (arTagEnd && (pTag.getPosition().nodeRef == pos.nodeRef)){
+              voiceState.RemovePositionTag(pTag.getCorrespondence());
+            }
+            else{
+              break;
+            }
+            this.posTagList.GetNext(voiceState.pTagPos);
+          }
+        }
+
+        var prevPos = {nodeRef: pos.nodeRef};
+        if (! pos.nodeRef){
+          break;
+        }
+
+        // Get object.
+        var obj = ObjectList.prototype.GetNext.apply(this, [pos]);
+        if (first.nodeRef == null){
+          first = obj;
+        }
+
+        // Check the object.
+        var myTag = obj.toARMusicalTag(); // ??? is a musical tag?
+        if (myTag){
+          if (myTag.IsStateTag()){
+            var myNewStaff = myTag.toARStaff(); // ??? is a staff?
+            if (myNewStaff){
+              // Gets the current staff from voiceState?
+              var tmp = voiceState.getCurStateTag('ARStaff');
+              if (tmp && tmp.getStaffNumber() != myNewStaff.getStaffNumber()){
+                // then we have new staff, so we delete clef and key info.
+                // ???
+                voiceState.RemoveCurStateTag('ARClef');
+                voiceState.RemoveCurStateTag('ARKey');
+              }
+            }
+            // ??? Pushes current tag to voiceState tracker?
+            voiceState.AddStateTag(myTag);
+          }
+
+          // Another isa check here???
+          if (myTag.toARBar()){
+            voiceState.curLastBarTimePos = obj.getRelativeTimePosition();
+            voiceState.curLastBarPos = {nodeRef: this.prevPos.nodeRef};
+          }
+          else if (myTag.toARStaff()){
+            // If staff changes ...
+            // empty in c++ code.
+          }
+        } // if (myTag)
+        else if (obj.toARRangeEnd()){
+          GuidoUtils.assert(false);
+        }
+
+        // Seems to add stuff to voiceState.
+        if (this.posTagList){
+          while (voiceState.pTagPos.nodeRef){
+            // This idiom again...
+            var pTag = posTagList.GetAt(voiceState.pTagPos);
+            var arTagEnd = pTag.toARTagEnd();
+            if (! arTagEnd && (pTag.getPosition().nodeRef == pos.nodeRef)){
+              voiceState.AddPositionTag(pTag);
+            }
+            else{
+              break;
+            }
+
+            this.posTagList.GetNext(voiceState.pTagPos);
+          }
+        }
+      } // do
+      while (overReadChord && (savedChordTag == voiceState.curChordTag));
+
+      voiceState.vPos = {nodeRef: pos.nodeRef};
+      if (first){
+        voiceState.curTimePos = first.getRelativeEndTimePosition();
+      }
+      else{
+        voiceState.curTimePos = Fraction.FRAC_0;
+      }
+
+      if (this.readMode == 'CHORDMODE'){
+        // Then we are at the first event of a chordtag and we can save
+        // the chord state.
+        if (voiceState.chordState){
+          voiceState.prevChordState = voiceState.chordState;
+          voiceState.chordState = null;
+        }
+        if (voiceState.curChordTag){
+          // Temporarily save prevChordState and chordState
+          // ???
+          var tempSave = voiceState.prevChordState;
+          voiceState.prevChordState = null;
+          voiceState.chordState = new ARMusicalVoiceState(voiceState);
+          voiceState.prevChordState = tempSave;
+        }
+      }
+
+      return first;
+
+    },
+
     MarkVoice: function(){
     },
 
@@ -325,9 +451,6 @@ function(
     },
 
     resetGRRepresentation: function(){
-    },
-
-    GetNext: function(pos, voiceState){
     },
 
     getVoiceState: function(){
